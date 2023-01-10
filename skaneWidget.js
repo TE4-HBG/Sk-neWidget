@@ -85,52 +85,6 @@ class Trip {
     }
 }
 
-/**Array clas for the stops file*/
-class Stop {
-    ID;
-    name;
-    stopLat;
-    stopLon;
-    locationType;
-    parentStation;
-    platformCode;
-    constructor(ID,name,stoplat,stoplon,locationType,parentStation,platformCode) {
-      this.ID = ID;
-      this.name = name;
-      this.stopLat = stoplat;
-      this.stopLon = stoplon;
-      this.locationType = locationType;
-      this.parentStation = parentStation;
-      this.platformCode = platformCode;
-    }
-  
-    static fromString(str) {
-      const splitted = str.split(',');
-      const stop = new Stop(
-        BigInt(splitted[0]),
-        splitted[1],
-        splitted[2],
-        splitted[3],
-        splitted[4],
-        BigInt(splitted[5]),
-        splitted[6]
-      );
-      return stop;
-    }
-  
-    static fromFile(path) {
-      const strs = fs.readFileSync("stops.txt").toString('utf8').split('\r\n');
-      strs.shift();
-      strs.pop();
-      const stopsArr = [];
-  
-      for (let index = 0; index < strs.length; index++) {
-        stopsArr[index] = Stop.fromString(strs[index]);
-      }
-      return stopsArr;
-    }
-}
-
 /**Array class for stoptimes file*/
 class StopTimes {
     tripID;
@@ -208,7 +162,6 @@ class Journey {
   }
 }
 
-const stopsArr = Stop.fromFile("");
 const tripsArr = Trip.fromFile("");
 const timesArr = StopTimes.fromFile("");
 const routesArr = Route.fromFile("");
