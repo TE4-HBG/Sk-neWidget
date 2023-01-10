@@ -187,20 +187,20 @@ class StopTimes {
 class Journey {
   routeId;
   routeShortName;
-  routeDestination;
+  routeLongName;
+  type;
   tripId;
   directionId;
   departureTime;
-  parentStation;
   stopId;
-  constructor(routeId, routeShortName, routeDestination, tripId, directionId, departureTime, parentStation, stopId) {
+  constructor(routeId, routeShortName, routeLongName,type,  tripId, directionId, departureTime, stopId) {
       this.routeId = routeId;
       this.routeShortName = routeShortName;
-      this.routeDestination = routeDestination;
+      this.routeLongName = routeLongName;
+      this.type = type;
       this.tripId = tripId;
       this.directionId = directionId;
       this.departureTime = departureTime;
-      this.parentStation = parentStation;
       this.stopId = stopId;
   }
 }
@@ -211,14 +211,14 @@ const routesArr = Route.fromFile("");
 
 var routeID = [
   //Buss routes
-  9011012041000000n,
-  9011012060100000n,
-  9011012021900000n,
-  9011012022100000n,
-  9011012060800000n,
-  9011012060200000n
-
+  9011012041000000n, //10,Örkelljunga - Helsingborg
+  9011012060100000n, //1,HelsingborgsExpressen Dalhem - Råå
+  9011012021900000n, //219,Helsingborg - Rydebäck
+  9011012022100000n, //221,Höganäs - Helsingborg
+  9011012060800000n, //8,Rosengården - Husensjö - Helsingborg C - Sofiero -
+  9011012060200000n, //2,Ödåkra/Berga - Helsingborg C - Ättekulla/Råå
   //Train routes
+  9011012830300000n, //3,"HELSINGBORG NO 3 Rosenlund, Hässlunda m fl - Påarp"
 ];
 
 var helsingborgCStops = [
@@ -263,43 +263,52 @@ var helsingborgCStops = [
   9022012083241049n
 ];
 
-//= stopsArr.filter(stop => stop.parentStation === 9021012083241000n)
-
+let journeys = [];
 for (let i = 0; i < routeID.length; i++) {
-  var givenSmallRoute = routeID[i];
-
-  var givenRoute = BigInt(givenSmallRoute);
+  
+  var givenRoute  = routeID[i];
 
   var found = routesArr.find(route => route.ID === givenRoute);
 
   var foundTrips = tripsArr.filter(trip => trip.routeID === found.ID);
-
-  var foundTime = timesArr.filter(time => {
-    for (let index = 0; index < helsingborgCStops.length; index++) {
-      if(time.stopID === helsingborgCStops[index]) {
-        return true;
+  timesArr.forEach(time => {
+    for (let stopIndex = 0; stopIndex < helsingborgCStops.length; stopIndex++) {
+      if(time.stopID === helsingborgCStops[stopIndex]) {
+        for (let tripIndex = 0; tripIndex < foundTrips.length; tripIndex++) {
+          if(time.tripID === foundTrips[tripIndex].tripID) {
+            journeys.push(new Journey(found.ID, found.shortName, found.longName, found.type, time.tripID, foundTrips[tripIndex].directionID, time.departureTime, time.stopID))
+          }
+        }
       }
     }
-    return false;
   });
-  //console.log(foundTime);
-  //console.log(foundTrips);
-  console.log(foundTime);
-
-  //Push into Journey class!!
-
 }
-/*
-var givenSmallRoute = 9011012041000000;
-var givenRoute = BigInt(givenSmallRoute);
+/*journeys.sort((a, b) => {
+  return a.departureTime - b.departureTime;
+})*/
+journeys.sort((a, b) => {
+  if (a.departureTime < b.departureTime) {
+    return -1;
+  }
+  if (a.departureTime > b.departureTime) {
+    return 1;
+  }
+  return 0;
+})
 
-//Finds the route for the given value tex: 9011012041000000n
-var found = routesArr.find(route => route.ID === givenRoute);
-console.log(found);
+let date = (() => {
+  const date = new Date();
+  return `${String(date.getHours()).padStart(2,'0')}:${String(date.getMinutes()).padStart(2,'0')}:${String(date.getSeconds()).padStart(2,'0')}`
+})();
 
-var foundTrips = tripsArr.filter(trip => trip.routeID === found.ID && trip.directionID === "0");
-console.log(foundTrips);
+console.log(date);
+let firstJourney;
+for (let index = 0; index < journeys.length; index++) {
+  if(date >= journeys[index].departureTime) {
+    firstJourney = index;
+  }
+}
 
-//uses the stop id for 10 at Helsingborg C
-var foundTime = timesArr.filter(time => time.stopID === 9022012083241025n);
-console.log(foundTime);*/
+for(let index = firstJourney; index < firstJourney + 12; index++) {
+  console.log(journeys[index % journeys.length]);
+}
