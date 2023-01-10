@@ -42,6 +42,7 @@ class Route {
       return routesArr;
     }
 }
+
 /**Array class for the trips file*/
 class Trip {
     routeID;
@@ -129,6 +130,7 @@ class Stop {
       return stopsArr;
     }
 }
+
 /**Array class for stoptimes file*/
 class StopTimes {
     tripID;
@@ -183,6 +185,7 @@ class StopTimes {
       return timesArr;
     }
 }
+
 /*Assemble a final class that is used for the display*/
 class Journey {
   routeId;
@@ -204,6 +207,7 @@ class Journey {
       this.stopId = stopId;
   }
 }
+
 const stopsArr = Stop.fromFile("");
 const tripsArr = Trip.fromFile("");
 const timesArr = StopTimes.fromFile("");
@@ -301,7 +305,7 @@ let date = (() => {
   return `${String(date.getHours()).padStart(2,'0')}:${String(date.getMinutes()).padStart(2,'0')}:${String(date.getSeconds()).padStart(2,'0')}`
 })();
 
-console.log(date);
+
 let firstJourney;
 for (let index = 0; index < journeys.length; index++) {
   if(date >= journeys[index].departureTime) {
@@ -309,6 +313,8 @@ for (let index = 0; index < journeys.length; index++) {
   }
 }
 
-for(let index = firstJourney; index < firstJourney + 12; index++) {
+for (let index = firstJourney; index < firstJourney + 10; index++) {
   console.log(journeys[index % journeys.length]);
 }
+
+console.log(date);
