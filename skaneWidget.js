@@ -266,8 +266,16 @@ for (let index = 0; index < journeys.length; index++) {
   }
 }
 
-for (let index = firstJourney; index < firstJourney + 10; index++) {
-  console.log(journeys[index % journeys.length]);
+let output = [];
+for (let index = firstJourney; index < firstJourney + 12; index++) {
+  output.push(journeys[index % journeys.length]);
 }
+
+console.log(output);
+
+console.log(output[9].routeShortName);
+console.log(output[9].routeLongName);
+console.log(output[9].type);
+console.log(output[9].departureTime);
 
 console.log(date);
